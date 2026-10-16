@@ -1,43 +1,41 @@
-# Decision Trees and Ensemble Classification
+# Decision Trees vs Ensembles: Car Evaluation
 
-Compare interpretable trees, Random Forest and AdaBoost on imbalanced car-evaluation classes.
+**A comparison of a simple decision tree, Random Forest and AdaBoost on an imbalanced, three-class categorical dataset.**
 
-**Python · scikit-learn · Decision Trees · Random Forest · AdaBoost**
+I wanted to see how much a tree ensemble improves upon a single interpretable decision tree — and how model depth changes performance. One lesson was that it's easy to make a comparison look convincing by plotting test results repeatedly. A cleaner evaluation chooses everything using cross-validation on training data, and only checks the test partition after making that choice.
 
-## Project at a glance
+## Original notebook results
 
-The saved Random Forest experiment reports CV macro F1 of 0.9565 and test macro F1 of 0.9725. AdaBoost reports test macro F1 of 0.8348. The tuned Decision Tree also reports 0.9725 on the test set.
+The saved assignment notebook reports Random Forest **training CV macro-F1 0.9565** and **held-out test macro-F1 0.9725**. The selected Decision Tree also scored **0.9725** on that test set, so the evidence does not support claiming Random Forest was unambiguously better.
 
-## Technical work
+**Important qualification:** The notebook explores test-set performance for multiple tree depths and prints the best model according to test macro-F1. That is useful for learning, but it is not a strictly untouched-test selection protocol. The standalone `train_clean.py` is provided to correct that methodological issue for new runs. No replacement UCI metrics are claimed until it is executed on the actual dataset.
 
-- Categorical encoding and class-distribution inspection
-- Tree visualization and root-split interpretation
-- Depth and bias–variance analysis
-- Ensemble tuning, confusion matrices and macro F1 comparison
+## Explore
 
-## Explore the evidence
+- [Original executed notebook](SIT720_9.1P_Corrected_Executed.ipynb)
+- [Coursework report](SIT720_9.1P_Corrected_Report.pdf)
+- [Training-only CV comparison script](train_clean.py)
+- [UCI data source and target-class mapping](DATA.md)
+- [Automated tests](tests/test_clean_evaluation.py)
 
-- [SIT720_9.1P_Corrected_Executed.ipynb](SIT720_9.1P_Corrected_Executed.ipynb)
-- [SIT720_9.1P_Corrected_Report.pdf](SIT720_9.1P_Corrected_Report.pdf)
+## Reproduce the cleaner evaluation
 
-## Run locally
+Python 3.10+:
 
 ```bash
-python -m venv .venv
-# Activate the environment, then:
-python -m pip install jupyter numpy pandas matplotlib scikit-learn
-jupyter notebook
+python -m pip install -r requirements.txt
+python train_clean.py
 ```
 
-The notebook loads a local car.data file when present, otherwise its configured UCI URL.
+The script downloads `car.data` from UCI unless you provide `--data car.data`, uses a stratified 80:20 split, selects model and hyperparameters with **3-fold training-only CV macro-F1**, then evaluates the selected model on the held-out test set **once**. It writes new findings to `results/new_clean_comparison.json`, separate from the historical report.
 
-Open the linked notebook and run the cells in order. Package names reflect the source imports; a fresh environment was not tested during this documentation update. Dataset downloads require internet access.
+Run the tests without the UCI dataset:
 
-## Limitations and status
+```bash
+python -m pip install -r requirements-test.txt
+python -m pytest -q
+```
 
-Uses the UCI Car Evaluation data with three grouped classes. The notebook plots repeated test-set comparisons; its results should not be presented as a single untouched-test benchmark.
+For the full original notebook with figures: install `requirements-notebook.txt`. The original notebook and report were not edited or rerun during this repository refactor.
 
-The repository preserves saved notebook outputs. Results are from those outputs, not a new execution.
-
-**Author:** Zenith Anthony Dabarera · SIT720 Machine Learning  
-[AI/ML portfolio](https://github.com/Zenith1997)
+**Author:** Zenith Anthony Dabarera | [GitHub](https://github.com/Zenith1997)
